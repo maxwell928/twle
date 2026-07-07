@@ -1,30 +1,60 @@
 /* ============================================================
    TWLE styles — mobile-first. Desktop just gets more whitespace.
+
+   Palette is Ghana-inspired (red / gold / green from the flag)
+   instead of generic Wordle gray-green, so this reads as its own
+   thing rather than a reskinned clone. All colors are CSS
+   variables in one place below if you want to retune them.
    ============================================================ */
 
 :root {
-  --color-bg: #ffffff;
-  --color-text: #1a1a1b;
-  --color-border: #d3d6da;
-  --color-key-bg: #d3d6da;
-  --color-key-text: #1a1a1b;
-  --color-correct: #6aaa64;
-  --color-present: #c9b458;
-  --color-absent: #787c7f;
-  --color-accent: #128c7e; /* WhatsApp-ish green for the share button */
+  --color-bg: #fffaf0;
+  --color-surface: #ffffff;
+  --color-text: #211d16;
+  --color-text-muted: #6b6355;
+  --color-border: #e6ddc9;
+
+  --color-correct: #0a8754;   /* Ghana green */
+  --color-present: #fcd116;   /* Ghana gold */
+  --color-present-text: #211d16; /* gold is light — needs dark text */
+  --color-absent: #8c8577;    /* warm neutral gray */
+
+  --color-accent: #ce1126;    /* Ghana red — brand accent, streaks, title */
+  --color-whatsapp: #25d366;  /* WhatsApp brand green — kept distinct from tile green */
+
+  --color-key-bg: #efe9d8;
+  --color-key-text: #211d16;
+
+  --shadow-sm: 0 1px 3px rgba(33, 29, 22, 0.15);
+  --shadow-md: 0 4px 14px rgba(33, 29, 22, 0.18);
 
   --tile-size: clamp(38px, 15vw, 62px);
   --tile-gap: 6px;
-  --key-text-color: var(--color-key-text);
+  --radius-tile: 8px;
+  --radius-key: 10px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #121213;
-    --color-text: #ffffff;
-    --color-border: #3a3a3c;
-    --color-key-bg: #818384;
-    --color-key-text: #ffffff;
+    --color-bg: #16140f;
+    --color-surface: #1f1c15;
+    --color-text: #f6f1e4;
+    --color-text-muted: #b6ac96;
+    --color-border: #3a3527;
+
+    --color-correct: #16a463;
+    --color-present: #ffd93d;
+    --color-present-text: #211d16;
+    --color-absent: #5b5648;
+
+    --color-accent: #ff5c5c;
+    --color-whatsapp: #2be878;
+
+    --color-key-bg: #2c281e;
+    --color-key-text: #f6f1e4;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
   }
 }
 
@@ -46,8 +76,24 @@ body {
   display: flex;
   flex-direction: column;
   overscroll-behavior: none;
-  padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* thin flag-inspired accent stripe, purely decorative */
+.flag-stripe {
+  height: 4px;
+  flex-shrink: 0;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent) 0%,
+    var(--color-accent) 33%,
+    var(--color-present) 33%,
+    var(--color-present) 66%,
+    var(--color-correct) 66%,
+    var(--color-correct) 100%
+  );
+  padding-top: env(safe-area-inset-top);
+  background-clip: content-box;
 }
 
 /* ---------- header ---------- */
@@ -61,25 +107,49 @@ body {
   flex-shrink: 0;
 }
 
+.header-titles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
 .title {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
+}
+
+.title .accent {
+  color: var(--color-accent);
+}
+
+.subtitle {
+  margin: 2px 0 0;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 
 .icon-btn {
-  background: none;
+  background: var(--color-key-bg);
   border: none;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   line-height: 1;
   color: var(--color-text);
   cursor: pointer;
-  padding: 8px;
-  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .icon-btn:active {
-  background: rgba(128, 128, 128, 0.2);
+  transform: scale(0.92);
 }
 
 /* ---------- layout ---------- */
@@ -120,6 +190,7 @@ body {
   width: var(--tile-size);
   height: var(--tile-size);
   border: 2px solid var(--color-border);
+  border-radius: var(--radius-tile);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,26 +199,30 @@ body {
   text-transform: uppercase;
   user-select: none;
   color: var(--color-text);
+  background: var(--color-surface);
 }
 
 .tile.filled {
-  border-color: #878a8c;
+  border-color: var(--color-text-muted);
 }
 
 .tile.correct {
   background: var(--color-correct);
   border-color: var(--color-correct);
   color: #fff;
+  box-shadow: var(--shadow-sm);
 }
 .tile.present {
   background: var(--color-present);
   border-color: var(--color-present);
-  color: #fff;
+  color: var(--color-present-text);
+  box-shadow: var(--shadow-sm);
 }
 .tile.absent {
   background: var(--color-absent);
   border-color: var(--color-absent);
   color: #fff;
+  box-shadow: var(--shadow-sm);
 }
 
 .tile.flip {
@@ -211,9 +286,9 @@ body {
   min-width: 28px;
   height: 52px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-key);
   background: var(--color-key-bg);
-  color: var(--key-text-color);
+  color: var(--color-key-text);
   font-size: 1rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -223,10 +298,13 @@ body {
   cursor: pointer;
   user-select: none;
   -webkit-touch-callout: none;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.08s ease;
 }
 
 .key:active {
-  opacity: 0.7;
+  transform: scale(0.93);
+  box-shadow: none;
 }
 
 .key.wide {
@@ -240,7 +318,7 @@ body {
 }
 .key.present {
   background: var(--color-present);
-  color: #fff;
+  color: var(--color-present-text);
 }
 .key.absent {
   background: var(--color-absent);
@@ -264,28 +342,39 @@ body {
 
 .share-btn {
   border: none;
-  border-radius: 8px;
-  padding: 12px 18px;
+  border-radius: 999px;
+  padding: 13px 20px;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   color: #fff;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.share-btn:active {
+  transform: scale(0.97);
 }
 
 .share-btn.whatsapp {
-  background: var(--color-accent);
+  background: var(--color-whatsapp);
   flex: 1;
 }
 
 .share-btn.copy {
-  background: var(--color-absent);
+  background: var(--color-key-bg);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ---------- toast ---------- */
 
 #toast-container {
   position: fixed;
-  top: calc(70px + env(safe-area-inset-top));
+  top: calc(74px + env(safe-area-inset-top));
   left: 0;
   right: 0;
   display: flex;
@@ -299,11 +388,11 @@ body {
 .toast {
   background: var(--color-text);
   color: var(--color-bg);
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
   font-weight: 700;
   font-size: 0.95rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-md);
   animation: fadeInOut 2.2s ease forwards;
 }
 
@@ -319,7 +408,7 @@ body {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(20, 17, 10, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -332,30 +421,50 @@ body {
 }
 
 .modal {
-  background: var(--color-bg);
+  background: var(--color-surface);
   color: var(--color-text);
-  border-radius: 12px;
-  padding: 24px 20px;
+  border-radius: 18px;
+  padding: 26px 22px;
   max-width: 420px;
   width: 100%;
   max-height: 85vh;
   overflow-y: auto;
   position: relative;
+  box-shadow: var(--shadow-md);
 }
 
 .modal h2 {
   margin-top: 0;
+  letter-spacing: 0.02em;
+}
+
+.modal h3 {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.modal p {
+  color: var(--color-text);
+  line-height: 1.5;
 }
 
 .modal-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: none;
+  top: 14px;
+  right: 14px;
+  background: var(--color-key-bg);
   border: none;
-  font-size: 1.2rem;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 0.9rem;
   color: var(--color-text);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .example-row {
@@ -368,13 +477,14 @@ body {
   width: 36px;
   height: 36px;
   font-size: 1rem;
+  border-radius: 6px;
 }
 
 .legend-swatch {
   display: inline-block;
   width: 14px;
   height: 14px;
-  border-radius: 3px;
+  border-radius: 4px;
   margin-right: 6px;
   vertical-align: middle;
 }
@@ -386,18 +496,20 @@ body {
   display: flex;
   justify-content: space-around;
   text-align: center;
-  margin: 16px 0;
+  margin: 18px 0;
 }
 
 .stat-num {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--color-accent);
 }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  opacity: 0.8;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
 }
 
 .distribution {
@@ -416,6 +528,7 @@ body {
 .dist-label {
   width: 12px;
   text-align: right;
+  color: var(--color-text-muted);
 }
 
 .dist-bar-track {
@@ -426,10 +539,10 @@ body {
   background: var(--color-absent);
   color: #fff;
   text-align: right;
-  padding: 2px 6px;
-  min-width: 22px;
+  padding: 3px 8px;
+  min-width: 24px;
   font-weight: 700;
-  border-radius: 3px;
+  border-radius: 5px;
 }
 
 .dist-bar.highlight {
