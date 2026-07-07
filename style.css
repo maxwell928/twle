@@ -1,0 +1,445 @@
+/* ============================================================
+   TWLE styles — mobile-first. Desktop just gets more whitespace.
+   ============================================================ */
+
+:root {
+  --color-bg: #ffffff;
+  --color-text: #1a1a1b;
+  --color-border: #d3d6da;
+  --color-key-bg: #d3d6da;
+  --color-key-text: #1a1a1b;
+  --color-correct: #6aaa64;
+  --color-present: #c9b458;
+  --color-absent: #787c7f;
+  --color-accent: #128c7e; /* WhatsApp-ish green for the share button */
+
+  --tile-size: clamp(38px, 15vw, 62px);
+  --tile-gap: 6px;
+  --key-text-color: var(--color-key-text);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #121213;
+    --color-text: #ffffff;
+    --color-border: #3a3a3c;
+    --color-key-bg: #818384;
+    --color-key-text: #ffffff;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  overscroll-behavior: none;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ---------- header ---------- */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+}
+.icon-btn:active {
+  background: rgba(128, 128, 128, 0.2);
+}
+
+/* ---------- layout ---------- */
+
+#game {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 8px calc(12px + env(safe-area-inset-bottom));
+  gap: 12px;
+  min-height: 0;
+}
+
+/* ---------- board ---------- */
+
+#board {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tile-gap);
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 0;
+}
+
+.row {
+  display: flex;
+  gap: var(--tile-gap);
+}
+
+.row.shake {
+  animation: shake 0.5s;
+}
+
+.tile {
+  width: var(--tile-size);
+  height: var(--tile-size);
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--tile-size) * 0.45);
+  font-weight: 700;
+  text-transform: uppercase;
+  user-select: none;
+  color: var(--color-text);
+}
+
+.tile.filled {
+  border-color: #878a8c;
+}
+
+.tile.correct {
+  background: var(--color-correct);
+  border-color: var(--color-correct);
+  color: #fff;
+}
+.tile.present {
+  background: var(--color-present);
+  border-color: var(--color-present);
+  color: #fff;
+}
+.tile.absent {
+  background: var(--color-absent);
+  border-color: var(--color-absent);
+  color: #fff;
+}
+
+.tile.flip {
+  animation: flip 0.5s ease forwards;
+}
+
+.tile.pop {
+  animation: pop 0.12s ease;
+}
+
+.row.winner .tile {
+  animation: bounce 0.5s ease;
+}
+
+@keyframes flip {
+  0%   { transform: rotateX(0deg); }
+  50%  { transform: rotateX(90deg); }
+  100% { transform: rotateX(0deg); }
+}
+
+@keyframes pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-18%); }
+  50% { transform: translateY(0); }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-8px); }
+  40%, 60% { transform: translateX(8px); }
+}
+
+/* ---------- keyboard ---------- */
+
+#keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 520px;
+  flex-shrink: 0;
+}
+
+.kb-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  touch-action: manipulation;
+}
+
+.key {
+  flex: 1;
+  max-width: 44px;
+  min-width: 28px;
+  height: 52px;
+  border: none;
+  border-radius: 6px;
+  background: var(--color-key-bg);
+  color: var(--key-text-color);
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.key:active {
+  opacity: 0.7;
+}
+
+.key.wide {
+  max-width: 66px;
+  font-size: 0.75rem;
+}
+
+.key.correct {
+  background: var(--color-correct);
+  color: #fff;
+}
+.key.present {
+  background: var(--color-present);
+  color: #fff;
+}
+.key.absent {
+  background: var(--color-absent);
+  color: #fff;
+}
+
+/* ---------- share row ---------- */
+
+.share-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 520px;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.share-row.hidden {
+  display: none;
+}
+
+.share-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: #fff;
+}
+
+.share-btn.whatsapp {
+  background: var(--color-accent);
+  flex: 1;
+}
+
+.share-btn.copy {
+  background: var(--color-absent);
+}
+
+/* ---------- toast ---------- */
+
+#toast-container {
+  position: fixed;
+  top: calc(70px + env(safe-area-inset-top));
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  animation: fadeInOut 2.2s ease forwards;
+}
+
+@keyframes fadeInOut {
+  0%   { opacity: 0; transform: translateY(-8px); }
+  10%  { opacity: 1; transform: translateY(0); }
+  85%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ---------- modals ---------- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border-radius: 12px;
+  padding: 24px 20px;
+  max-width: 420px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.example-row {
+  display: flex;
+  gap: 4px;
+  margin: 10px 0 6px;
+}
+
+.tile.small {
+  width: 36px;
+  height: 36px;
+  font-size: 1rem;
+}
+
+.legend-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.legend-swatch.correct { background: var(--color-correct); }
+.legend-swatch.present { background: var(--color-present); }
+.legend-swatch.absent { background: var(--color-absent); }
+
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  margin: 16px 0;
+}
+
+.stat-num {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.distribution {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dist-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.dist-label {
+  width: 12px;
+  text-align: right;
+}
+
+.dist-bar-track {
+  flex: 1;
+}
+
+.dist-bar {
+  background: var(--color-absent);
+  color: #fff;
+  text-align: right;
+  padding: 2px 6px;
+  min-width: 22px;
+  font-weight: 700;
+  border-radius: 3px;
+}
+
+.dist-bar.highlight {
+  background: var(--color-correct);
+}
+
+/* ---------- desktop niceties ---------- */
+
+@media (min-width: 600px) {
+  #game {
+    padding-top: 24px;
+  }
+}
